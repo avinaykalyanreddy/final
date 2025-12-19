@@ -5,7 +5,7 @@ import cv2
 def decode_image(data):
     # Handle both data URL format and plain base64
     if "," in data:
-        header, encoded = data.split(",", 1)
+      header, encoded = data.split(",", 1)
     else:
         encoded = data
     img_bytes = base64.b64decode(encoded)
