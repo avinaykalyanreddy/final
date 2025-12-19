@@ -2,6 +2,27 @@ let socket;
 const peerConnections = new Map(); // userId -> RTCPeerConnection
 const localStream = null;
 
+// Cross-browser helper for getUserMedia
+function getUserMediaStream(constraints) {
+  if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === "function") {
+    return navigator.mediaDevices.getUserMedia(constraints);
+  }
+
+  const legacyGetUserMedia =
+    navigator.getUserMedia ||
+    navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia ||
+    navigator.msGetUserMedia;
+
+  if (legacyGetUserMedia) {
+    return new Promise((resolve, reject) => {
+      legacyGetUserMedia.call(navigator, constraints, resolve, reject);
+    });
+  }
+
+  return Promise.reject(new Error("getUserMedia is not supported in this browser/context."));
+}
+
 function initializeWebRTC(roomIdParam, userNameParam) {
   const roomId = roomIdParam || "default";
   const userName = userNameParam;
@@ -24,7 +45,7 @@ function initializeWebRTC(roomIdParam, userNameParam) {
     alert("Failed to connect to signaling server. Make sure it's running on port 3000.");
   });
 
-  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  getUserMediaStream({ video: true, audio: true })
     .then(stream => {
       console.log("Got user media stream");
       localVideo.srcObject = stream;

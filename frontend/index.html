@@ -10,21 +10,91 @@
     }
     
     body {
-      font-family: Arial, sans-serif;
-      display: flex;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       height: 100vh;
       overflow: hidden;
+      background: radial-gradient(circle at top left, #1e3c72, #2a5298 40%, #050816 100%);
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
     
+    .app-shell {
+      width: 100%;
+      max-width: 1280px;
+      height: 100%;
+      max-height: 720px;
+      background: #f9fafb;
+      border-radius: 18px;
+      box-shadow:
+        0 22px 45px rgba(15, 23, 42, 0.35),
+        0 0 0 1px rgba(148, 163, 184, 0.2);
+      display: flex;
+      overflow: hidden;
+    }
+
     .main-content {
-      flex: 1;
+      flex: 1.4;
       display: flex;
       flex-direction: column;
-      padding: 20px;
+      padding: 18px 22px;
+      background: linear-gradient(135deg, #0f172a 0%, #020617 35%, #020617 100%);
+      color: #e5e7eb;
     }
     
-    h2 {
-      margin-bottom: 20px;
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .session-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #e5e7eb;
+    }
+
+    .pill-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #9ca3af;
+    }
+
+    .pill-value {
+      font-weight: 600;
     }
     
     .video-container {
@@ -33,29 +103,37 @@
       flex-wrap: wrap;
       flex: 1;
       overflow-y: auto;
+      padding: 6px 2px 4px;
     }
     
     video {
       width: 45%;
       min-width: 300px;
-      border: 1px solid black;
-      border-radius: 8px;
-      background: #000;
+      border-radius: 14px;
+      background: #020617;
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(15, 23, 42, 0.9);
     }
     
     #captions {
-      font-size: 24px;
-      color: green;
+      font-size: 18px;
+      color: #4ade80;
       margin-top: 10px;
       font-weight: bold;
       min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(22, 163, 74, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      display: flex;
+      align-items: center;
     }
     
     .action-bar {
       width: 300px;
-      background: #f5f5f5;
-      border-left: 2px solid #ddd;
-      padding: 20px;
+      background: #f3f4f6;
+      border-left: 1px solid #e5e7eb;
+      padding: 18px 18px 16px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -63,9 +141,9 @@
     
     .action-bar h3 {
       margin-bottom: 15px;
-      color: #333;
+      color: #111827;
       font-size: 18px;
-      border-bottom: 2px solid #333;
+      border-bottom: 1px solid #e5e7eb;
       padding-bottom: 10px;
     }
     
@@ -74,7 +152,7 @@
       padding: 12px;
       margin-bottom: 10px;
       border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
       border-left: 4px solid #4CAF50;
       animation: slideIn 0.3s ease-out;
     }
@@ -92,29 +170,34 @@
     
     .action-item .user-name {
       font-weight: bold;
-      color: #2196F3;
+      color: #1d4ed8;
       font-size: 14px;
       margin-bottom: 4px;
     }
     
     .action-item .action-text {
-      color: #333;
+      color: #111827;
       font-size: 16px;
     }
     
     .action-item .timestamp {
-      color: #999;
+      color: #9ca3af;
       font-size: 12px;
       margin-top: 4px;
     }
     
+    .hidden {
+      display: none !important;
+    }
+
+    /* Modernized join modal */
     #nameModal {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.7);
+      background: rgba(15,23,42,0.75);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -122,43 +205,82 @@
     }
     
     .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-      min-width: 300px;
+      background: #020617;
+      padding: 32px 30px 28px;
+      border-radius: 20px;
+      text-align: left;
+      min-width: 340px;
+      max-width: 420px;
+      box-shadow:
+        0 24px 45px rgba(15, 23, 42, 0.65),
+        0 0 0 1px rgba(148, 163, 184, 0.35);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      color: #e5e7eb;
     }
     
     .modal-content h3 {
-      margin-bottom: 20px;
-      color: #333;
+      margin-bottom: 6px;
+      color: #e5e7eb;
+      font-size: 22px;
+      font-weight: 700;
     }
     
+    .modal-subtitle {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+    }
+
+    .field-label {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .field-group {
+      margin-bottom: 16px;
+    }
+
     .modal-content input {
       width: 100%;
       padding: 12px;
       font-size: 16px;
-      border: 2px solid #ddd;
+      border: 1px solid #4b5563;
       border-radius: 6px;
-      margin-bottom: 20px;
+      margin-bottom: 4px;
+      background: #020617;
+      color: #e5e7eb;
+      outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+    }
+    
+    .modal-content input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px #38bdf8;
+      background: #020617;
     }
     
     .modal-content button {
-      padding: 12px 30px;
+      padding: 11px 26px;
       font-size: 16px;
-      background: #4CAF50;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 999px;
       cursor: pointer;
+      font-weight: 600;
+      margin-top: 16px;
+      width: 100%;
+      box-shadow: 0 12px 24px rgba(22, 163, 74, 0.55);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
     }
     
     .modal-content button:hover {
-      background: #45a049;
-    }
-    
-    .hidden {
-      display: none !important;
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 16px 32px rgba(22, 163, 74, 0.65);
     }
   </style>
 </head>
@@ -166,26 +288,53 @@
 
 <div id="nameModal">
   <div class="modal-content">
-    <h3>Join Meeting</h3>
-    <input type="text" id="roomIdInput" placeholder="Room ID (e.g. room1)" maxlength="20" style="margin-bottom:10px;">
-    <input type="text" id="userNameInput" placeholder="Your name" maxlength="20">
-    <button onclick="joinWithName()">Join</button>
+    <h3>Welcome to Zoom Sign</h3>
+    <p class="modal-subtitle">Join a room to start a signed conversation with live captions.</p>
+
+    <div class="field-group">
+      <div class="field-label">Room ID</div>
+      <input type="text" id="roomIdInput" placeholder="e.g. room1" maxlength="20">
+    </div>
+
+    <div class="field-group">
+      <div class="field-label">Your Name</div>
+      <input type="text" id="userNameInput" placeholder="How should others see you?" maxlength="20">
+    </div>
+
+    <button onclick="joinWithName()">Join meeting</button>
   </div>
 </div>
 
-<div class="main-content hidden" id="mainContent">
-  <h2>Zoom-Sign MVP</h2>
-  
-  <div class="video-container" id="videoContainer">
-    <video id="localVideo" autoplay muted></video>
+<div class="app-shell hidden" id="mainContent">
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="brand">
+        <div class="brand-title">Zoom Sign</div>
+        <div class="brand-subtitle">Real-time sign understanding for any meeting</div>
+      </div>
+      <div class="session-info">
+        <div class="pill">
+          <span class="pill-label">Room</span>
+          <span class="pill-value" id="roomInfo">–</span>
+        </div>
+        <div class="pill">
+          <span class="pill-label">You</span>
+          <span class="pill-value" id="userInfo">–</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="video-container" id="videoContainer">
+      <video id="localVideo" autoplay muted></video>
+    </div>
+    
+    <div id="captions">Waiting for signs...</div>
   </div>
-  
-  <div id="captions">Waiting for signs...</div>
-</div>
 
-<div class="action-bar">
-  <h3>Recent Actions</h3>
-  <div id="actionList"></div>
+  <div class="action-bar">
+    <h3>Recent Actions</h3>
+    <div id="actionList"></div>
+  </div>
 </div>
 
 <canvas id="canvas" hidden></canvas>
@@ -212,6 +361,10 @@
     console.log("Joining room:", roomId, "with name:", userName);
     window.roomId = roomId;
     window.userName = userName; // Make available globally
+    const roomInfoEl = document.getElementById('roomInfo');
+    const userInfoEl = document.getElementById('userInfo');
+    if (roomInfoEl) roomInfoEl.textContent = roomId;
+    if (userInfoEl) userInfoEl.textContent = userName;
     
     // Hide modal and show main content
     const modal = document.getElementById('nameModal');
