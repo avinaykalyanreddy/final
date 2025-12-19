@@ -34,7 +34,9 @@ function initializeWebRTC(roomIdParam, userNameParam) {
     return;
   }
 
-  socket = io("http://localhost:3000");
+  // Use configurable URL from config.js, fallback to localhost
+  const signalingUrl = (window.CONFIG && window.CONFIG.SIGNALING_SERVER) || "http://localhost:3000";
+  socket = io(signalingUrl);
 
   socket.on("connect", () => {
     console.log("Connected to signaling server");

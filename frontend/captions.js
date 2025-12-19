@@ -19,7 +19,9 @@ function initializeCaptions(userNameParam) {
   
   ctx = canvas.getContext("2d");
   
-  ws = new WebSocket("ws://localhost:8000/ws");
+  // Use configurable URL from config.js, fallback to localhost
+  const mlServerUrl = (window.CONFIG && window.CONFIG.ML_SERVER_WS) || "ws://localhost:8000/ws";
+  ws = new WebSocket(mlServerUrl);
 
   ws.onopen = () => {
     console.log("WebSocket connected to ML server");

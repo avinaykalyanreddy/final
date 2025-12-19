@@ -4,7 +4,10 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const PORT = process.env.PORT || 3000;
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
+
+const io = new Server(server, { cors: { origin: CORS_ORIGIN } });
 
 // rooms: roomId -> Map(socketId -> { name })
 const rooms = new Map();
@@ -138,6 +141,7 @@ io.on("connection", socket => {
   });
 });
 
-server.listen(3000, () => {
-  console.log("📡 Signaling server running on port 3000");
+server.listen(PORT, () => {
+  console.log(`📡 Signaling server running on port ${PORT}`);
+  console.log(`CORS origin: ${CORS_ORIGIN}`);
 });
