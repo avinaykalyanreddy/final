@@ -166,9 +166,10 @@
 
 <div id="nameModal">
   <div class="modal-content">
-    <h3>Enter Your Name</h3>
+    <h3>Join Meeting</h3>
+    <input type="text" id="roomIdInput" placeholder="Room ID (e.g. room1)" maxlength="20" style="margin-bottom:10px;">
     <input type="text" id="userNameInput" placeholder="Your name" maxlength="20">
-    <button onclick="joinWithName()">Join Meeting</button>
+    <button onclick="joinWithName()">Join</button>
   </div>
 </div>
 
@@ -196,12 +197,20 @@
 <script>
   // userName will be set when user joins
   window.joinWithName = function() {
-    let userName = '';
-    userName = document.getElementById('userNameInput').value.trim();
+    const roomInput = document.getElementById('roomIdInput');
+    const nameInput = document.getElementById('userNameInput');
+
+    let roomId = roomInput ? roomInput.value.trim() : '';
+    let userName = nameInput ? nameInput.value.trim() : '';
+
+    if (!roomId) {
+      roomId = 'room1';
+    }
     if (!userName) {
       userName = 'User' + Math.floor(Math.random() * 1000);
     }
-    console.log("Joining with name:", userName);
+    console.log("Joining room:", roomId, "with name:", userName);
+    window.roomId = roomId;
     window.userName = userName; // Make available globally
     
     // Hide modal and show main content
@@ -213,10 +222,10 @@
     
     // Small delay to ensure DOM is updated
     setTimeout(() => {
-      // Initialize WebRTC with user name
+      // Initialize WebRTC with room + user name
       if (typeof initializeWebRTC === 'function') {
         console.log("Calling initializeWebRTC");
-        initializeWebRTC(userName);
+        initializeWebRTC(roomId, userName);
       } else {
         console.error("initializeWebRTC function not found!");
         alert("Error: WebRTC initialization function not found. Please refresh the page.");
@@ -236,7 +245,13 @@
   
   // Wait for DOM and scripts to be ready
   document.addEventListener('DOMContentLoaded', () => {
+    const roomIdInput = document.getElementById('roomIdInput');
     const userNameInput = document.getElementById('userNameInput');
+
+    if (roomIdInput) {
+      roomIdInput.value = 'room1';
+    }
+
     if (userNameInput) {
       userNameInput.focus();
       

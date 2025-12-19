@@ -2,9 +2,10 @@ let socket;
 const peerConnections = new Map(); // userId -> RTCPeerConnection
 const localStream = null;
 
-function initializeWebRTC(userNameParam) {
+function initializeWebRTC(roomIdParam, userNameParam) {
+  const roomId = roomIdParam || "default";
   const userName = userNameParam;
-  console.log("Initializing WebRTC for user:", userName);
+  console.log("Initializing WebRTC for user:", userName, "in room:", roomId);
   
   const localVideo = document.getElementById("localVideo");
   if (!localVideo) {
@@ -29,9 +30,9 @@ function initializeWebRTC(userNameParam) {
       localVideo.srcObject = stream;
       window.localStream = stream;
       
-      // Join with user name
-      socket.emit("join", userName);
-      console.log("Sent join event with name:", userName);
+      // Join with room + user name
+      socket.emit("join", { roomId, userName });
+      console.log("Sent join event with name:", userName, "room:", roomId);
     })
     .catch(error => {
       console.error("Error accessing media devices:", error);
@@ -49,8 +50,25 @@ function initializeWebRTC(userNameParam) {
     }
   });
 
+  // When we first join, server can send existingActions so we see
+  // current messages from everyone already in the room.
+  socket.on("existingActions", (actions) => {
+    if (!actions || !Array.isArray(actions)) return;
+    if (typeof window.addActionToBar !== "function") return;
+
+    actions.forEach(({ userName, action }) => {
+      if (!userName || !action) return;
+      window.addActionToBar(userName, action);
+    });
+  });
+
   socket.on("userJoined", async (data) => {
-    await createPeerConnection(data.userId, data.userName);
+    // A new user joined this room.
+    // They will create the offer to us using the existingUsers list,
+    // so here we just ensure a peer connection exists (non-initiator).
+    if (!peerConnections.has(data.userId)) {
+      await createPeerConnection(data.userId, data.userName, false);
+    }
   });
 
   socket.on("userLeft", (data) => {
@@ -91,6 +109,19 @@ function initializeWebRTC(userNameParam) {
       await pc.addIceCandidate(new RTCIceCandidate(candidate));
     }
   });
+
+  // Receive sign actions from others in the room and show them in Recent Actions
+  socket.on("action", (data) => {
+    if (!data) return;
+    const { userId, userName, action } = data;
+    if (typeof window.addActionToBar === "function") {
+      // Pass userName; addActionToBar will ensure only one row per user.
+      window.addActionToBar(userName, action);
+    }
+  });
+
+  // Expose socket globally so other scripts (captions.js) can use it
+  window.socket = socket;
 }
 
 async function createPeerConnection(userId, userName, initiator = true) {
@@ -111,11 +142,27 @@ async function createPeerConnection(userId, userName, initiator = true) {
 
   // Create remote video element
   const videoContainer = document.getElementById("videoContainer");
+  const wrapper = document.createElement("div");
+  wrapper.style.display = "flex";
+  wrapper.style.flexDirection = "column";
+  wrapper.style.alignItems = "center";
+  wrapper.style.width = "45%";
+
   const remoteVideo = document.createElement("video");
   remoteVideo.id = `video-${userId}`;
   remoteVideo.autoplay = true;
   remoteVideo.playsInline = true;
-  videoContainer.appendChild(remoteVideo);
+  remoteVideo.style.width = "100%";
+
+  const nameLabel = document.createElement("div");
+  nameLabel.innerText = userName || "Participant";
+  nameLabel.style.marginTop = "8px";
+  nameLabel.style.fontWeight = "bold";
+  nameLabel.style.textAlign = "center";
+
+  wrapper.appendChild(remoteVideo);
+  wrapper.appendChild(nameLabel);
+  videoContainer.appendChild(wrapper);
 
   pc.ontrack = event => {
     remoteVideo.srcObject = event.streams[0];

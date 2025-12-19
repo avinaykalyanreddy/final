@@ -1,4 +1,5 @@
 from fastapi import FastAPI, WebSocket
+from starlette.websockets import WebSocketDisconnect
 import cv2, torch
 import numpy as np
 import json
@@ -43,8 +44,8 @@ async def ws_endpoint(ws: WebSocket):
     await ws.accept()
     userName = None
 
-    while True:
-        try:
+    try:
+        while True:
             data = await ws.receive_text()
             
             # Try to parse as JSON
@@ -112,6 +113,7 @@ async def ws_endpoint(ws: WebSocket):
                         "prediction": stable
                     })
                     await ws.send_text(response)
-        except Exception as e:
-            print(f"Error processing frame: {e}")
-            continue
+    except WebSocketDisconnect:
+        print(f"Client {userName} disconnected from ML server")
+    except Exception as e:
+        print(f"Error processing frame: {e}")
